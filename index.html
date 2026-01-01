@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +56,7 @@
         let after = null;
         let currentSubreddit = '';
 
-        // Store gallery images per post id (so we don't have to embed JSON in HTML attrs)
+        // Store gallery images per post id
         const galleryStore = Object.create(null);
 
         // Markdown config (comments panel only)
@@ -111,7 +110,7 @@
             return imgs;
         }
 
-        // Build gallery UI HTML (two big + thumbs)
+        // Gallery UI: thumbs ABOVE, two highlighted big images BELOW
         function renderGalleryUI(postId, images) {
             if (!images || images.length === 0) return '';
             galleryStore[postId] = images;
@@ -121,10 +120,6 @@
 
             return `
                 <div class="gallery" data-post-id="${postId}">
-                    <div class="gallery-main">
-                        <img class="gallery-main-img" data-slot="0" src="${first}" alt="Gallery image" loading="lazy" referrerpolicy="no-referrer">
-                        <img class="gallery-main-img" data-slot="1" src="${second}" alt="Gallery image" loading="lazy" referrerpolicy="no-referrer">
-                    </div>
                     <div class="gallery-thumbs">
                         ${images.map((u, i) => `
                             <img class="gallery-thumb ${i === 0 ? 'active' : ''}"
@@ -136,11 +131,16 @@
                                  referrerpolicy="no-referrer">
                         `).join('')}
                     </div>
+
+                    <div class="gallery-main">
+                        <img class="gallery-main-img" data-slot="0" src="${first}" alt="Gallery image" loading="lazy" referrerpolicy="no-referrer">
+                        <img class="gallery-main-img" data-slot="1" src="${second}" alt="Gallery image" loading="lazy" referrerpolicy="no-referrer">
+                    </div>
                 </div>
             `;
         }
 
-        // Update the two highlighted images to (idx) and (idx+1), wrapping around
+        // Update highlighted pair to (idx) and (idx+1), wrapping around
         function updateGallery(postId, idx) {
             const images = galleryStore[postId];
             if (!images || !images.length) return;
@@ -158,13 +158,12 @@
             if (img0) img0.src = images[i0];
             if (img1) img1.src = images[i1];
 
-            // Update active thumb styling
             galleryEl.querySelectorAll('.gallery-thumb').forEach(t => {
                 t.classList.toggle('active', Number(t.dataset.idx) === i0);
             });
         }
 
-        // Event delegation: clicking a thumbnail updates that gallery
+        // Click thumbnail -> show that + next in highlighted area
         document.addEventListener('click', (e) => {
             const t = e.target;
             if (!(t instanceof Element)) return;

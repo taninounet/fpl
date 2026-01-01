@@ -35,9 +35,7 @@
     </div>
 
     <div id="main-content">
-        <div id="content">
-            <!-- Posts will load here -->
-        </div>
+        <div id="content"></div>
 
         <div id="comments-section" class="hidden">
             <div id="comments-header">
@@ -59,23 +57,46 @@
         let currentSubreddit = '';
         let isLoading = false;
 
-        // Subreddits for left/right cycling
         const SUBREDDITS = ['fantasypl', 'coys', 'reddevils', 'mcfc', 'chelseafc', 'gunners', 'liverpoolfc', 'crystalpalace'];
 
-        // Calm placeholder thumbnail for non-image posts
         const PLACEHOLDER_THUMB = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='70' height='70'><rect width='100%25' height='100%25' fill='%23eceff1'/><path d='M18 28h34v2H18zm0 8h26v2H18zm0 8h30v2H18z' fill='%23c0c7cf'/></svg>";
 
-        // Store gallery images per post id
         const galleryStore = Object.create(null);
 
-        // Markdown config (comments)
         marked.setOptions({ gfm: true, breaks: true, mangle: false, headerIds: false });
+
+        // ✅ Robust "is this a Reddit-family URL?"
+        function isRedditUrl(href) {
+            if (!href) return false;
+            const h = String(href).toLowerCase();
+            try {
+                const u = new URL(h);
+                const host = u.hostname.replace(/^www\./, '');
+                return (
+                    host === 'reddit.com' ||
+                    host.endsWith('.reddit.com') ||
+                    host === 'redd.it' ||
+                    host.endsWith('.redd.it') ||
+                    host === 'v.redd.it' ||
+                    host === 'i.redd.it' ||
+                    host === 'preview.redd.it'
+                );
+            } catch {
+                return (
+                    h.includes('reddit.com') ||
+                    h.includes('redd.it') ||
+                    h.includes('v.redd.it') ||
+                    h.includes('i.redd.it') ||
+                    h.includes('preview.redd.it')
+                );
+            }
+        }
 
         function renderRedditContent(md) {
             if (!md) return '';
+
             let text = String(md)
                 .replace(/&amp;nbsp;|&nbsp;/g, '\n\n')
-                // Reddit-style giphy shorthand: ![gif](giphy|<id>)
                 .replace(/!\[gif\]\(giphy\|([^\)]+)\)/gi, (m, id) => `![](https://media.giphy.com/media/${id}/giphy.gif)`);
 
             let html = marked.parse(text);
@@ -98,20 +119,19 @@
                 a.replaceWith(img);
             });
 
-            // Remove hyperlinks that go back to Reddit / redd.it / v.redd.it (keep text)
+            // ✅ Remove ALL Reddit-family hyperlinks: show raw text only
             wrapper.querySelectorAll('a[href]').forEach(a => {
-                const href = (a.getAttribute('href') || '').toLowerCase();
-                if (href.includes('reddit.com') || href.includes('redd.it') || href.includes('v.redd.it') || href.includes('preview.redd.it')) {
-                    const span = document.createElement('span');
-                    span.textContent = a.textContent || a.getAttribute('href') || '';
-                    a.replaceWith(span);
-                }
+                const href = (a.getAttribute('href') || '').replace(/&amp;/g, '&');
+                if (!isRedditUrl(href)) return;
+
+                const span = document.createElement('span');
+                span.textContent = href; // show raw URL text
+                a.replaceWith(span);
             });
 
             return wrapper.innerHTML;
         }
 
-        // Gallery helpers
         function getGalleryImages(postData) {
             const imgs = [];
             if (!postData || !postData.is_gallery || !postData.gallery_data || !postData.media_metadata) return imgs;
@@ -181,7 +201,7 @@
             });
         }
 
-        // Click thumbnail -> show that + next (and DON'T open comments)
+        // Click thumbnail -> switch images (DON'T open comments)
         document.addEventListener('click', (e) => {
             const t = e.target;
             if (!(t instanceof Element)) return;
@@ -241,14 +261,18 @@
                     const isImage = postData.post_hint === 'image';
                     const galleryImages = getGalleryImages(postData);
 
-                    const isExternal = !url.includes('reddit.com');
+                    // ✅ "External" means NOT Reddit-family
+                    const isExternalNonReddit = url && !isRedditUrl(url);
 
                     postElement.innerHTML = `
                         <div class="post-thumbnail">
                             <img src="${thumbnail}" alt="Thumbnail">
                         </div>
                         <div class="post-details">
-                            ${isExternal ? `<a href="${url}" target="_blank" class="post-title">${title}</a>` : `<span class="post-title no-link">${title}</span>`}
+                            ${isExternalNonReddit
+                                ? `<a href="${url}" target="_blank" class="post-title">${title}</a>`
+                                : `<span class="post-title no-link">${title}</span>`
+                            }
                             <div class="post-meta">
                                 <span>${timeSince}</span> |
                                 <span class="comments-count">${comments} comments</span>
@@ -261,13 +285,10 @@
                         </div>
                     `;
 
-                    // Entire post box opens comments (except clicking external links or gallery thumbs)
+                    // ✅ Whole post opens comments (but NOT when clicking links or gallery thumbs)
                     postElement.addEventListener('click', (e) => {
-                        // don't open if user clicked a link
-                        if (e.target.closest('a')) return;
-                        // don't open if user clicked inside gallery thumbs (handled elsewhere)
-                        if (e.target.closest('.gallery-thumbs')) return;
-
+                        if (e.target.closest('a')) return;            // keep external links clickable
+                        if (e.target.closest('.gallery-thumbs')) return; // thumbs just switch images
                         loadComments(postId, subreddit);
                     });
 
@@ -289,7 +310,6 @@
             const response = await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}.json?sort=best`);
             const data = await response.json();
 
-            // Post text box: TEXT ONLY
             const postInfo = data[0]?.data?.children?.[0]?.data;
             const postText = (postInfo?.selftext || '').trim();
             const postTextBox = document.getElementById('post-text-box');

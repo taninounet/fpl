@@ -156,9 +156,10 @@ body {
 .post-thumbnail img {
     width: 70px;
     height: 70px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 5px;
     margin-right: 15px;
+    background: #eceff1; /* calm */
 }
 
 .post-details {
@@ -184,6 +185,15 @@ body {
     font-size: 14px;
 }
 
+.comments-link {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.comments-link:hover {
+    text-decoration: underline;
+}
+
 .expandable-image {
     margin-top: 10px;
 }
@@ -205,7 +215,7 @@ body {
     margin-top: 10px;
 }
 
-/* Thumbnails: show ALL (wrap) */
+/* Thumbnails: show ALL (wrap), no width limit */
 .gallery-thumbs {
     display: flex;
     flex-wrap: wrap;
@@ -213,16 +223,15 @@ body {
     margin-bottom: 10px;
 }
 
-/* Thumbs stay in a neat grid, but never crop */
 .gallery-thumb {
     width: 56px;
     height: 56px;
-    object-fit: contain;   /* no crop */
+    object-fit: contain; /* never crop */
     border-radius: 5px;
     cursor: pointer;
     opacity: 0.85;
     border: 2px solid transparent;
-    background: #fff;      /* nice letterbox background */
+    background: #fff;
 }
 
 .gallery-thumb:hover {
@@ -234,23 +243,24 @@ body {
     border-color: #37003c;
 }
 
-/* Highlighted pair: FIXED WIDTH, TRUE proportional HEIGHT (no crop, no forced equal height) */
+/* Highlighted pair: fixed width, TRUE proportional height, no cropping */
 .gallery-main {
     display: flex;
     gap: 10px;
-    align-items: flex-start; /* IMPORTANT: prevents equal-height stretching behavior */
-    overflow-x: auto;        /* keeps both at full width if screen is narrow */
+    align-items: flex-start; /* do NOT equalize heights */
+    overflow-x: auto;        /* keep them big even if screen is narrow */
     padding-bottom: 6px;
 }
 
 .gallery-main-img {
-    width: 500px;             /* fixed width (like a standard single-image post) */
+    width: 500px;             /* same as single-image "big" */
     flex: 0 0 500px;
     height: auto !important;  /* true proportional height */
     max-height: none !important;
-    object-fit: contain !important; /* show full image, no crop */
+    object-fit: contain !important; /* never crop */
     border-radius: 6px;
     display: block;
+    background: #fff;
 }
 /* ===== end gallery ===== */
 
@@ -316,7 +326,7 @@ body {
     margin-left: 20px;
 }
 
-/* Original post text box */
+/* Original post text box (TEXT ONLY) */
 .post-text-box {
     background: #fff;
     border: 1px solid #ddd;
@@ -334,8 +344,8 @@ body {
     max-width: 100% !important;
     width: auto !important;
     height: auto !important;
-    max-height: 12em !important;
-    max-height: 8lh !important;
+    max-height: 12em !important; /* fallback */
+    max-height: 8lh !important;  /* ~8 lines when supported */
     object-fit: contain !important;
     border-radius: 5px;
     display: block;
@@ -343,7 +353,7 @@ body {
 }
 
 /* Tables (Reddit markdown) */
-.comment-body table, .post-text-box table {
+.comment-body table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
@@ -351,13 +361,12 @@ body {
     overflow-x: auto;
 }
 
-.comment-body th, .comment-body td,
-.post-text-box th, .post-text-box td {
+.comment-body th, .comment-body td {
     border: 1px solid #ddd;
     padding: 6px 8px;
     text-align: left;
 }
 
-.comment-body thead th, .post-text-box thead th {
+.comment-body thead th {
     background: #f6f7f8;
 }

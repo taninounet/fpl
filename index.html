@@ -1,1 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Subreddits</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
 
+<body onload="loadSubreddit('fantasypl')">
+
+<div class="navbar-container">
+    <div class="navbar">
+        <a href="#" onclick="loadSubreddit('fantasypl')" class="logo-link">
+            <img
+                src="https://logos-world.net/wp-content/uploads/2023/08/Premier-League-Logo.png"
+                alt="Premier League Logo"
+                class="logo"
+            >
+        </a>
+
+        <div class="nav-links">
+            <a href="#" onclick="loadSubreddit('fantasypl')">FPL</a>
+            <a href="#" onclick="loadSubreddit('coys')">Spurs</a>
+            <a href="#" onclick="loadSubreddit('reddevils')">ManUtd</a>
+            <a href="#" onclick="loadSubreddit('mcfc')">ManCity</a>
+            <a href="#" onclick="loadSubreddit('chelseafc')">Chelsea</a>
+            <a href="#" onclick="loadSubreddit('gunners')">Arsenal</a>
+            <a href="#" onclick="loadSubreddit('liverpoolfc')">Liverpool</a>
+        </div>
+
+        <div class="search-bar">
+            <input id="search-input" placeholder="subreddit" onkeypress="if(event.key==='Enter') searchSubreddit()">
+            <button onclick="searchSubreddit()">
+                <img src="https://img.icons8.com/ios-glyphs/30/ffffff/search.png">
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="main-content">
+    <div id="content"></div>
+
+    <div id="comments-section" class="hidden">
+        <div id="comments-header">
+            <h2>Post & Comments</h2>
+            <button onclick="closeComments()">X</button>
+        </div>
+        <div id="post-preview"></div>
+        <div id="comments-container"></div>
+    </div>
+</div>
+
+<button id="load-more" onclick="loadMorePosts()">Load More</button>
+
+<script>
+let after = null;
+let currentSubreddit = '';
+
+function searchSubreddit() {
+    const q = document.getElementById('search-input').value.trim();
+    if (q) loadSubreddit(q);
+}
+
+async function loadSubreddit(subreddit, reset = true) {
+    currentSubreddit = subreddit;
+
+    if (reset) {
+        after = null;
+        document.getElementById('content').innerHTML = '';
+        document.getElementById('comments-section').classList.add('hidden');
+        document.getElementById('content').style.width = '100%';
+    }
+
+    const res = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=10&after=${after}`);
+    const json = await res.json();
+    after = json.data.after;
+
+    json.data.children.forEach(p => renderPost(p.data));
+    document.getElementById('load-more').style.display = after ? 'block' : 'none';
+}
+
+function renderPost(post) {
+    const el = document.createElement('div');
+    el.className = 'post';
+
+    el.innerHTML = `
+        <div class="post-details">
+            <span class="post-title">${post.title}</span>
+            <div class="post-meta">
+                ${timeAgo(post.created_utc)} ·
+                <span class="comments-link" onclick="loadComments('${post.id}','${currentSubreddit}')">
+                    ${post.num_comments} comments
+                </span>
+            </div>
+            ${renderImages(post)}
+        </div>
+    `;
+    document.getElementById('content').appendChild(el);
+}
+
+function renderImages(post) {
+    // Gallery posts
+    if (post.gallery_data && post.media_metadata) {
+        return `
+            <div class="image-grid">
+                ${post.gallery_data.items.map(i => {
+                    const m = post.media_metadata[i.media_id];
+                    return `<img src="${m.s.u.replace(/&amp;/g,'&')}">`;
+                }).join('')}
+            </div>
+        `;
+    }
+
+    // Single image
+    if (post.post_hint === 'image') {
+        return `<img class="single-image" src="${post.url}">`;
+    }
+
+    return '';
+}
+
+async function loadComments(postId, subreddit) {
+    const res = await fetch(`https://www.reddit.com/r/${subreddit}/comments/${postId}.json`);
+    const json = await res.json();
+
+    const post = json[0].data.children[0].data;
+    const comments = json[1].data.children;
+
+    document.getElementById('post-preview').innerHTML = `
+        <div class="post-preview">
+            <h3>${post.title}</h3>
+            <div class="post-meta">${post.author} · ${timeAgo(post.created_utc)}</div>
+            ${post.selftext ? `<p>${post.selftext}</p>` : ''}
+            ${renderImages(post)}
+        </div>
+    `;
+
+    const cc = document.getElementById('comments-container');
+    cc.innerHTML = '';
+    comments.forEach(c => {
+        if (c.kind === 't1') cc.appendChild(renderComment(c.data));
+    });
+
+    document.getElementById('comments-section').classList.remove('hidden');
+    document.getElementById('content').style.width = '70%';
+}
+
+function renderComment(c) {
+    const el = document.createElement('div');
+    el.className = 'comment';
+    el.innerHTML = `
+        <div class="comment-header">
+            <strong>${c.author}</strong>
+            <span>${timeAgo(c.created_utc)}</span>
+        </div>
+        <div class="comment-body">${c.body}</div>
+    `;
+    return el;
+}
+
+function closeComments() {
+    document.getElementById('comments-section').classList.add('hidden');
+    document.getElementById('content').style.width = '100%';
+}
+
+function loadMorePosts() {
+    loadSubreddit(currentSubreddit, false);
+}
+
+function timeAgo(ts) {
+    const s = Math.floor(Date.now()/1000 - ts);
+    const m = Math.floor(s/60);
+    const h = Math.floor(m/60);
+    const d = Math.floor(h/24);
+    if (d) return `${d}d ago`;
+    if (h) return `${h}h ago`;
+    if (m) return `${m}m ago`;
+    return `${s}s ago`;
+}
+</script>
+
+</body>
+</html>

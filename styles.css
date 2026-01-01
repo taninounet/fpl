@@ -261,7 +261,7 @@ body {
     margin-left: 20px;
 }
 
-/* CHANGE #2: styling for the original post text box (minimal add) */
+/* Original post text box + rich formatting */
 .post-text-box {
     background: #fff;
     border: 1px solid #ddd;
@@ -269,7 +269,33 @@ body {
     padding: 12px;
     margin-bottom: 15px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    white-space: pre-wrap; /* preserve line breaks from Reddit selftext */
-    font-size: 14px;
-    line-height: 1.5;
+    white-space: pre-wrap; /* keep line breaks */
+}
+
+.comment-body img, .post-text-box img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    display: block;
+    margin-top: 8px;
+}
+
+/* Tables (Reddit markdown) */
+.comment-body table, .post-text-box table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    display: block;
+    overflow-x: auto;
+}
+
+.comment-body th, .comment-body td,
+.post-text-box th, .post-text-box td {
+    border: 1px solid #ddd;
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.comment-body thead th, .post-text-box thead th {
+    background: #f6f7f8;
 }

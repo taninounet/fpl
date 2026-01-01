@@ -29,13 +29,14 @@ body {
 }
 
 .navbar .logo {
-    height: 150px;                 /* WAY bigger */
+    height: 110px;                 /* smaller so it doesn't overlap feed */
     width: auto;
     position: absolute;
     left: 20px;
-    top: calc(50% + 22px);         /* LOWER it */
+    top: 50%;                      /* centered on the purple bar */
     transform: translateY(-50%);
     z-index: 3;
+    pointer-events: none;          /* prevents it from blocking clicks */
 }
 
 /* Give nav links enough space for the bigger logo */

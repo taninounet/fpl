@@ -22,28 +22,29 @@ body {
     position: relative;
 }
 
-/* Logo: vertically centered on the purple bar, bigger than the bar */
+/* ✅ Logo: MUCH bigger + lowered */
 .logo-link {
     position: relative;
     z-index: 2;
 }
 
 .navbar .logo {
-    height: 90px;                 /* taller than the purple bar */
+    height: 150px;                 /* WAY bigger */
     width: auto;
     position: absolute;
     left: 20px;
-    top: 50%;                     /* vertically centered */
+    top: calc(50% + 22px);         /* LOWER it */
     transform: translateY(-50%);
     z-index: 3;
 }
 
+/* Give nav links enough space for the bigger logo */
 .nav-links {
     display: flex;
     flex-grow: 1;
     justify-content: space-around;
     padding: 10px 0;
-    margin-left: 160px;           /* extra space for the bigger logo */
+    margin-left: 220px;            /* increased to avoid overlap */
 }
 
 .nav-links a {
@@ -153,7 +154,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    cursor: pointer; /* whole card clickable */
+    cursor: pointer;
 }
 
 .post-thumbnail img {
@@ -176,7 +177,6 @@ body {
     text-decoration: none;
 }
 
-/* External links still look clickable */
 .post-title:hover {
     text-decoration: underline;
 }
@@ -197,7 +197,6 @@ body {
     margin-top: 10px;
 }
 
-/* MAIN FEED single-image posts (no height clamp) */
 .expandable-image img {
     width: 100%;
     max-width: 500px;
@@ -209,7 +208,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== Gallery UI (thumbs above, 2 big images below) ===== */
+/* ===== Gallery UI ===== */
 .gallery {
     margin-top: 10px;
 }
@@ -323,7 +322,6 @@ body {
     margin-left: 20px;
 }
 
-/* Original post text box (TEXT ONLY) */
 .post-text-box {
     background: #fff;
     border: 1px solid #ddd;

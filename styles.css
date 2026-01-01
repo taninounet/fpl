@@ -191,6 +191,8 @@ body {
 .expandable-image img {
     width: 100%;
     max-width: 500px;
+    max-height: 12em;          /* ~8 lines */
+    object-fit: contain;
     cursor: pointer;
     border-radius: 5px;
 }
@@ -272,9 +274,12 @@ body {
     white-space: pre-wrap; /* keep line breaks */
 }
 
+/* Height-limited media in rendered markdown */
 .comment-body img, .post-text-box img {
     max-width: 100%;
     height: auto;
+    max-height: 12em;          /* ~8 lines */
+    object-fit: contain;
     border-radius: 5px;
     display: block;
     margin-top: 8px;

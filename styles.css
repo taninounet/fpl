@@ -205,26 +205,24 @@ body {
     margin-top: 10px;
 }
 
-/* Thumbnails: no width limit; show them ALL (wrap to new lines) */
-.gallery-thumb {
-    width: 56px;
-    height: 56px;          /* keeps grid neat */
-    object-fit: contain;   /* show full image (no crop) */
-    border-radius: 5px;
-    cursor: pointer;
-    opacity: 0.85;
-    border: 2px solid transparent;
-    background: #fff;      /* looks nicer with letterboxing */
+/* Thumbnails: show ALL (wrap) */
+.gallery-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 
+/* Thumbs stay in a neat grid, but never crop */
 .gallery-thumb {
     width: 56px;
     height: 56px;
-    object-fit: cover;
+    object-fit: contain;   /* no crop */
     border-radius: 5px;
     cursor: pointer;
     opacity: 0.85;
     border: 2px solid transparent;
+    background: #fff;      /* nice letterbox background */
 }
 
 .gallery-thumb:hover {
@@ -236,19 +234,21 @@ body {
     border-color: #37003c;
 }
 
-/* Highlighted pair: keep each at the same "big" size as normal single image (500px) */
+/* Highlighted pair: FIXED WIDTH, TRUE proportional HEIGHT (no crop, no forced equal height) */
 .gallery-main {
     display: flex;
     gap: 10px;
-    overflow-x: auto;     /* so images stay BIG and don't shrink */
+    align-items: flex-start; /* IMPORTANT: prevents equal-height stretching behavior */
+    overflow-x: auto;        /* keeps both at full width if screen is narrow */
     padding-bottom: 6px;
 }
 
 .gallery-main-img {
-    width: 500px;          /* fixed width */
+    width: 500px;             /* fixed width (like a standard single-image post) */
     flex: 0 0 500px;
-    height: auto;          /* keep original proportions */
-    object-fit: contain;   /* show full image (no crop) */
+    height: auto !important;  /* true proportional height */
+    max-height: none !important;
+    object-fit: contain !important; /* show full image, no crop */
     border-radius: 6px;
     display: block;
 }
@@ -334,8 +334,8 @@ body {
     max-width: 100% !important;
     width: auto !important;
     height: auto !important;
-    max-height: 12em !important; /* fallback */
-    max-height: 8lh !important;  /* ~8 lines when supported */
+    max-height: 12em !important;
+    max-height: 8lh !important;
     object-fit: contain !important;
     border-radius: 5px;
     display: block;

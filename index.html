@@ -14,7 +14,6 @@
     <div class="navbar-container">
         <div class="navbar">
             <a href="#" onclick="loadSubreddit('fantasypl')" class="logo-link">
-                <!-- Premier League logo (one-line change) -->
                 <img src="https://logos-world.net/wp-content/uploads/2023/08/Premier-League-Logo.png" alt="Premier League Logo" class="logo">
             </a>
             <div class="nav-links">
@@ -63,7 +62,7 @@
         // Subreddits for left/right cycling
         const SUBREDDITS = ['fantasypl', 'coys', 'reddevils', 'mcfc', 'chelseafc', 'gunners', 'liverpoolfc', 'crystalpalace'];
 
-        // Calm placeholder thumbnail for non-image posts (no blue '?')
+        // Calm placeholder thumbnail for non-image posts
         const PLACEHOLDER_THUMB = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='70' height='70'><rect width='100%25' height='100%25' fill='%23eceff1'/><path d='M18 28h34v2H18zm0 8h26v2H18zm0 8h30v2H18z' fill='%23c0c7cf'/></svg>";
 
         // Store gallery images per post id
@@ -87,16 +86,26 @@
 
             // Turn image links into inline images
             wrapper.querySelectorAll('a[href]').forEach(a => {
-                const href = a.getAttribute('href') || '';
+                const href = (a.getAttribute('href') || '').replace(/&amp;/g, '&');
                 const isImg = /\.(png|jpe?g|gif|webp)(\?.*)?$/i.test(href) || href.includes('preview.redd.it/');
                 if (!isImg) return;
 
                 const img = document.createElement('img');
-                img.src = href.replace(/&amp;/g, '&');
+                img.src = href;
                 img.alt = '';
                 img.loading = 'lazy';
                 img.referrerPolicy = 'no-referrer';
                 a.replaceWith(img);
+            });
+
+            // Remove hyperlinks that go back to Reddit / redd.it / v.redd.it (keep text)
+            wrapper.querySelectorAll('a[href]').forEach(a => {
+                const href = (a.getAttribute('href') || '').toLowerCase();
+                if (href.includes('reddit.com') || href.includes('redd.it') || href.includes('v.redd.it') || href.includes('preview.redd.it')) {
+                    const span = document.createElement('span');
+                    span.textContent = a.textContent || a.getAttribute('href') || '';
+                    a.replaceWith(span);
+                }
             });
 
             return wrapper.innerHTML;
@@ -128,7 +137,6 @@
             const first = images[0];
             const second = images.length > 1 ? images[1] : images[0];
 
-            // Thumbs ABOVE, highlighted pair BELOW
             return `
                 <div class="gallery" data-post-id="${postId}">
                     <div class="gallery-thumbs">
@@ -173,11 +181,13 @@
             });
         }
 
-        // Click thumbnail -> show that + next
+        // Click thumbnail -> show that + next (and DON'T open comments)
         document.addEventListener('click', (e) => {
             const t = e.target;
             if (!(t instanceof Element)) return;
             if (!t.classList.contains('gallery-thumb')) return;
+
+            e.stopPropagation();
 
             const postId = t.getAttribute('data-post-id');
             const idx = Number(t.getAttribute('data-idx'));
@@ -241,7 +251,7 @@
                             ${isExternal ? `<a href="${url}" target="_blank" class="post-title">${title}</a>` : `<span class="post-title no-link">${title}</span>`}
                             <div class="post-meta">
                                 <span>${timeSince}</span> |
-                                <span class="comments-link" onclick="loadComments('${postId}', '${subreddit}')">${comments} comments</span>
+                                <span class="comments-count">${comments} comments</span>
                             </div>
 
                             ${galleryImages.length
@@ -250,6 +260,16 @@
                             }
                         </div>
                     `;
+
+                    // Entire post box opens comments (except clicking external links or gallery thumbs)
+                    postElement.addEventListener('click', (e) => {
+                        // don't open if user clicked a link
+                        if (e.target.closest('a')) return;
+                        // don't open if user clicked inside gallery thumbs (handled elsewhere)
+                        if (e.target.closest('.gallery-thumbs')) return;
+
+                        loadComments(postId, subreddit);
+                    });
 
                     contentDiv.appendChild(postElement);
                 });
@@ -275,7 +295,7 @@
             const postTextBox = document.getElementById('post-text-box');
 
             if (postText) {
-                postTextBox.textContent = postText; // TEXT ONLY
+                postTextBox.textContent = postText;
                 postTextBox.classList.remove('hidden');
             } else {
                 postTextBox.textContent = '';
@@ -361,7 +381,7 @@
             return Math.floor(seconds) + " seconds ago";
         }
 
-        // --- Micro UX: ESC closes comments, left/right cycles subreddits ---
+        // ESC closes comments, left/right cycles subreddits
         document.addEventListener('keydown', (e) => {
             const active = document.activeElement;
             const typing = active && (
@@ -385,7 +405,7 @@
             }
         });
 
-        // --- Hybrid infinite scroll: auto-load when near bottom (keeps button too) ---
+        // Hybrid infinite scroll: auto-load near bottom (keeps button too)
         let scrollTimer = null;
         document.getElementById('content').addEventListener('scroll', () => {
             if (scrollTimer) return;

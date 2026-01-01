@@ -10,8 +10,8 @@ body {
 }
 
 .navbar-container {
-    background-color: white; /* Ensures a white background above the purple navbar */
-    padding-top: 20px; /* Space above the navbar */
+    background-color: white;
+    padding-top: 20px;
 }
 
 .navbar {
@@ -28,26 +28,26 @@ body {
 }
 
 .navbar .logo {
-    width: 80px; /* Bigger logo */
+    width: 80px;
     height: auto;
     position: absolute;
     left: 20px;
-    top: -50px; /* Lowered by 10 pixels */
+    top: -50px;
     z-index: 2;
 }
 
 .nav-links {
     display: flex;
     flex-grow: 1;
-    justify-content: space-around; /* Evenly distribute the nav items */
+    justify-content: space-around;
     padding: 10px 0;
-    margin-left: 120px; /* Make space for the larger logo */
+    margin-left: 120px;
 }
 
 .nav-links a {
     color: #ffffff;
     text-align: center;
-    padding: 0 40px; /* Increased spacing */
+    padding: 0 40px;
     text-decoration: none;
     font-weight: bold;
     font-family: "PremierLeague", Arial, sans-serif;
@@ -62,8 +62,8 @@ body {
     display: flex;
     align-items: center;
     background-color: #37003c;
-    padding-right: 5px; /* Adjusted padding to the right */
-    width: 130px; /* Keep the width to maintain alignment */
+    padding-right: 5px;
+    width: 130px;
 }
 
 .search-bar input {
@@ -73,8 +73,8 @@ body {
     outline: none;
     background: none;
     color: #ffffff;
-    width: 80px; /* Adjusted input width */
-    border-bottom: 2px solid #ffffff; /* White lower border for the input field */
+    width: 80px;
+    border-bottom: 2px solid #ffffff;
 }
 
 .search-bar input::placeholder {
@@ -188,7 +188,7 @@ body {
     margin-top: 10px;
 }
 
-/* MAIN FEED IMAGE: no height limit (reverted) */
+/* MAIN FEED single-image posts (no height clamp) */
 .expandable-image img {
     width: 100%;
     max-width: 500px;
@@ -198,6 +198,23 @@ body {
 
 .expandable-image img:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* NEW: gallery row (multiple images in main feed) */
+.image-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.image-row img {
+    height: 140px;            /* keeps them “in a row” and readable */
+    width: auto;
+    object-fit: cover;
+    border-radius: 5px;
+    flex: 0 0 auto;
 }
 
 #load-more {
@@ -262,7 +279,7 @@ body {
     margin-left: 20px;
 }
 
-/* Original post text box + rich formatting */
+/* Original post text box */
 .post-text-box {
     background: #fff;
     border: 1px solid #ddd;
@@ -270,7 +287,7 @@ body {
     padding: 12px;
     margin-bottom: 15px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    white-space: pre-wrap; /* keep line breaks */
+    white-space: pre-wrap;
 }
 
 /* ONLY clamp media inside the COMMENTS panel */

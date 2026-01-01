@@ -200,41 +200,26 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== NEW: Gallery UI (two big + thumbnails) ===== */
+/* ===== Gallery UI (thumbs above, 2 big images below) ===== */
 .gallery {
     margin-top: 10px;
-    max-width: 500px; /* same feel as your single-image posts */
 }
 
-.gallery-main {
-    display: flex;
-    gap: 10px;
-}
-
-.gallery-main-img {
-    width: calc(50% - 5px);
-    height: 240px;          /* keeps the two-up layout clean */
-    object-fit: cover;
-    border-radius: 6px;
-    display: block;
-}
-
+/* Thumbnails: no width limit; show them ALL (wrap to new lines) */
 .gallery-thumbs {
     display: flex;
+    flex-wrap: wrap;      /* show all thumbs, no scrolling needed */
     gap: 8px;
-    margin-top: 10px;
-    overflow-x: auto;
-    padding-bottom: 6px;
+    margin-bottom: 10px;
 }
 
 .gallery-thumb {
+    width: 56px;
     height: 56px;
-    width: auto;
     object-fit: cover;
     border-radius: 5px;
     cursor: pointer;
-    opacity: 0.8;
-    flex: 0 0 auto;
+    opacity: 0.85;
     border: 2px solid transparent;
 }
 
@@ -245,6 +230,23 @@ body {
 .gallery-thumb.active {
     opacity: 1;
     border-color: #37003c;
+}
+
+/* Highlighted pair: keep each at the same "big" size as normal single image (500px) */
+.gallery-main {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;     /* so images stay BIG and don't shrink */
+    padding-bottom: 6px;
+}
+
+.gallery-main-img {
+    width: 500px;         /* same as your single-image max width */
+    flex: 0 0 500px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
 }
 /* ===== end gallery ===== */
 

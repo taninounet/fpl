@@ -200,22 +200,53 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-/* NEW: gallery row (multiple images in main feed) */
-.image-row {
+/* ===== NEW: Gallery UI (two big + thumbnails) ===== */
+.gallery {
+    margin-top: 10px;
+    max-width: 500px; /* same feel as your single-image posts */
+}
+
+.gallery-main {
     display: flex;
     gap: 10px;
+}
+
+.gallery-main-img {
+    width: calc(50% - 5px);
+    height: 240px;          /* keeps the two-up layout clean */
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+
+.gallery-thumbs {
+    display: flex;
+    gap: 8px;
     margin-top: 10px;
     overflow-x: auto;
     padding-bottom: 6px;
 }
 
-.image-row img {
-    height: 140px;            /* keeps them “in a row” and readable */
+.gallery-thumb {
+    height: 56px;
     width: auto;
     object-fit: cover;
     border-radius: 5px;
+    cursor: pointer;
+    opacity: 0.8;
     flex: 0 0 auto;
+    border: 2px solid transparent;
 }
+
+.gallery-thumb:hover {
+    opacity: 1;
+}
+
+.gallery-thumb.active {
+    opacity: 1;
+    border-color: #37003c;
+}
+/* ===== end gallery ===== */
 
 #load-more {
     display: block;

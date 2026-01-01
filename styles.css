@@ -188,12 +188,10 @@ body {
     margin-top: 10px;
 }
 
+/* MAIN FEED IMAGE: no height limit (reverted) */
 .expandable-image img {
     width: 100%;
     max-width: 500px;
-    max-height: 12em !important; /* ~8 lines fallback */
-    max-height: 8lh !important;  /* ~8 *line-height* (better when supported) */
-    object-fit: contain !important;
     cursor: pointer;
     border-radius: 5px;
 }
@@ -275,17 +273,15 @@ body {
     white-space: pre-wrap; /* keep line breaks */
 }
 
-/* HARD clamp ALL media shown in comments/post text */
+/* ONLY clamp media inside the COMMENTS panel */
 #comments-section img,
 #comments-section video,
-#comments-section iframe,
-.comment-body img,
-.post-text-box img {
+#comments-section iframe {
     max-width: 100% !important;
     width: auto !important;
     height: auto !important;
     max-height: 12em !important; /* fallback */
-    max-height: 8lh !important;  /* ~8 lines */
+    max-height: 8lh !important;  /* ~8 lines when supported */
     object-fit: contain !important;
     border-radius: 5px;
     display: block;

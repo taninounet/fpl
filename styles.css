@@ -22,18 +22,20 @@ body {
     position: relative;
 }
 
+/* Logo: vertically centered on the purple bar, bigger than the bar */
 .logo-link {
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
 .navbar .logo {
-    width: 80px;
-    height: auto;
+    height: 90px;                 /* taller than the purple bar */
+    width: auto;
     position: absolute;
     left: 20px;
-    top: -50px;
-    z-index: 2;
+    top: 50%;                     /* vertically centered */
+    transform: translateY(-50%);
+    z-index: 3;
 }
 
 .nav-links {
@@ -41,7 +43,7 @@ body {
     flex-grow: 1;
     justify-content: space-around;
     padding: 10px 0;
-    margin-left: 120px;
+    margin-left: 160px;           /* extra space for the bigger logo */
 }
 
 .nav-links a {
@@ -151,6 +153,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer; /* whole card clickable */
 }
 
 .post-thumbnail img {
@@ -159,7 +162,7 @@ body {
     object-fit: contain;
     border-radius: 5px;
     margin-right: 15px;
-    background: #eceff1; /* calm */
+    background: #eceff1;
 }
 
 .post-details {
@@ -173,6 +176,11 @@ body {
     text-decoration: none;
 }
 
+/* External links still look clickable */
+.post-title:hover {
+    text-decoration: underline;
+}
+
 .post-title.no-link {
     color: #1c1c1c;
     text-decoration: none;
@@ -183,15 +191,6 @@ body {
     margin-top: 5px;
     color: #606060;
     font-size: 14px;
-}
-
-.comments-link {
-    color: #007bff;
-    cursor: pointer;
-}
-
-.comments-link:hover {
-    text-decoration: underline;
 }
 
 .expandable-image {
@@ -215,7 +214,6 @@ body {
     margin-top: 10px;
 }
 
-/* Thumbnails: show ALL (wrap), no width limit */
 .gallery-thumbs {
     display: flex;
     flex-wrap: wrap;
@@ -226,7 +224,7 @@ body {
 .gallery-thumb {
     width: 56px;
     height: 56px;
-    object-fit: contain; /* never crop */
+    object-fit: contain;
     border-radius: 5px;
     cursor: pointer;
     opacity: 0.85;
@@ -243,21 +241,20 @@ body {
     border-color: #37003c;
 }
 
-/* Highlighted pair: fixed width, TRUE proportional height, no cropping */
 .gallery-main {
     display: flex;
     gap: 10px;
-    align-items: flex-start; /* do NOT equalize heights */
-    overflow-x: auto;        /* keep them big even if screen is narrow */
+    align-items: flex-start;
+    overflow-x: auto;
     padding-bottom: 6px;
 }
 
 .gallery-main-img {
-    width: 500px;             /* same as single-image "big" */
+    width: 500px;
     flex: 0 0 500px;
-    height: auto !important;  /* true proportional height */
+    height: auto !important;
     max-height: none !important;
-    object-fit: contain !important; /* never crop */
+    object-fit: contain !important;
     border-radius: 6px;
     display: block;
     background: #fff;
@@ -344,8 +341,8 @@ body {
     max-width: 100% !important;
     width: auto !important;
     height: auto !important;
-    max-height: 12em !important; /* fallback */
-    max-height: 8lh !important;  /* ~8 lines when supported */
+    max-height: 12em !important;
+    max-height: 8lh !important;
     object-fit: contain !important;
     border-radius: 5px;
     display: block;

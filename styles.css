@@ -15,7 +15,7 @@ body {
 }
 
 .navbar {
-    background-color: #37003c;
+    background-color: #3a155c;
     display: flex;
     align-items: center;
     padding: 10px 0;
@@ -65,7 +65,7 @@ body {
 .search-bar {
     display: flex;
     align-items: center;
-    background-color: #37003c;
+    background-color: #3a155c;
     padding-right: 5px;
     width: 130px;
 }
@@ -134,7 +134,7 @@ body {
 }
 
 #comments-header button {
-    background-color: #37003c;
+    background-color: #3a155c;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -238,7 +238,7 @@ body {
 
 .gallery-thumb.active {
     opacity: 1;
-    border-color: #37003c;
+    border-color: #3a155c;
 }
 
 .gallery-main {
